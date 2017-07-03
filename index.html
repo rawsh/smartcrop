@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Smart Crop: Content Aware Crop</title>
+		<meta name="description" content="Smart crop images with neural networks." />
+		<meta name="author" content="Robert Washbourne" />
+		<link rel="shortcut icon" href="favicon.ico">
+        
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+        
+		<!--[if IE]>
+  		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+        
+        <script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+
+		<!-- remove this if you use Modernizr -->
+		<script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+	</head>
+	<body>
+		<div class="container">
+			<header class="codrops-header">
+				<h1 style="color: #d3394c">Smart Crop</h1>
+                <p>content aware, neural net crop tool</p>
+			</header>
+			<div class="content">
+				<div class="box">
+                    <div id="loader" class="loader"></div>
+					<input type="file" name="file[]" id="file" class="inputfile inputfile-sexy" onchange="readURL(this);" />
+					<label for="file"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg> <span>Choose an image&hellip;</span></label>
+                    <img class='fileimage' id="fileimage" src="#" alt="your image" />
+                    <div id="scroll"></div>
+				</div>
+
+				<footer>by <a href="http://www.devpy.me" target="_blank">Robert Washbourne</a></footer>
+
+			</div>
+        </div>
+        
+        <script src="js/custom-file-input.js"></script>
+        <script>
+        
+        function postToImgur(input) {
+          var formData = new FormData();
+          formData.append("image", input.files[0]);
+          $.ajax({
+            url: "https://api.imgur.com/3/image",
+            type: "POST",
+            datatype: "json",
+            headers: {
+              "Authorization": "Client-ID 12cc85985fc6526"
+            },
+            data: formData,
+            success: function(response) {
+              console.log("finished imgur upload");
+
+              var photo = response.data.link;
+              var photo_hash = response.data.deletehash;
+                
+              readTextFile("https://www.wolframcloud.com/objects/user-e1b49185-7c46-4642-bcd8-fae1f862de00/CropThis?url=" + photo, function(e) {
+                  console.log("finished server call");
+                  var links = JSON.parse(e);
+                  for(var i=0; i<links.length; i++) {
+                      $("#scroll").append("<a src='"+links[i]+"'><img class='scroll-item' src='"+links[i]+"'/></a>");
+                  }
+                  $("#loader").removeClass("loading");
+              });
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+          });
+        }    
+            
+        function readTextFile(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.overrideMimeType("application/json");
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function() {
+                if (rawFile.readyState === 4 && rawFile.status == "200") {
+                    callback(rawFile.responseText);
+                }
+            }
+            rawFile.send(null);
+        }
+            
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                postToImgur(input);
+                
+                var reader = new FileReader();
+                
+                reader.readAsDataURL(input.files[0]);
+
+                reader.onload = function (e) {
+                    var fi = document.getElementById('fileimage');
+                    fi.setAttribute("src", e.target.result);
+                    
+                    $("#loader").addClass("loading");
+                };
+            }
+        }
+        </script>
+	</body>
+</html>
