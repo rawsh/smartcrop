@@ -165,14 +165,23 @@ a:focus {
 }
 
 .box {
+    width: 100%;
+    margin: auto;
 	background-color: rgb(26, 26, 26);
 	padding: 2.25rem .25rem;
 }
 
-.box + .box {
-	margin-top: 2.5rem;
+.box.hovered {
+    width: calc(100% - 10px);
+    background: rgb(26, 26, 26);
+	border: 2px dashed #fff;
+    outline: 2px dashed rgb(20, 20, 20);
+	box-shadow: 0 0 0 6px rgb(26, 26, 26), 0 0 0 6px rgb(20, 20, 20);
 }
 
+#filelabel {
+    max-width: 260px;
+}
 
 /* Related demos */
 

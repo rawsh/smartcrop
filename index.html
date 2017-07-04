@@ -49,10 +49,10 @@
                 <p>content aware, neural net crop tool</p>
 			</header>
 			<div class="content">
-				<div class="box" id="dp">
+				<div class="box" id="dp" style="min-height: 168px;">
                     <div id="loader" class="loader"></div>
 					<input type="file" name="file[]" id="file" class="inputfile inputfile-sexy" onchange="readURL(this);" />
-					<label for="file"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg> <span>Choose an image&hellip;</span></label>
+					<label for="file" id="filelabel"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="17" viewBox="0 0 20 17"><path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z"/></svg> <span>Choose an image&hellip;</span></label>
                     <img class='fileimage' id="fileimage" src="#" alt="your image" />
                     <div id="scroll"></div>
 				</div>
@@ -64,16 +64,37 @@
         
         <script src="js/custom-file-input.js"></script>
         <script>
-        $('body').onload(function (){
-            $("#dp").ondragover = dropContainer.ondragenter = function(evt) {
-              evt.preventDefault();
-            };
+        $(document).ready(function (){
+            var el = $("#dp");
+            var file_el = $("#file");
+            var box_el = $("#dp");
+            var counter = 0;
+            
+            el.on('dragenter', function (evt) {
+                counter++;
+                box_el.addClass("hovered");
+                evt.preventDefault();
+            });
+            
+            el.on('dragover', function (evt) {
+                evt.preventDefault();
+            });
+            
+            el.on('dragleave', function (evt) {
+                counter--;
+                if (counter === 0) { 
+                    box_el.removeClass("hovered");
+                }
+                evt.preventDefault();
+            });
 
-            $("#dp").ondrop = function(evt) {
-              // pretty simple -- but not for IE :(
-              $("#file").files = evt.dataTransfer.files;
-              evt.preventDefault();
-            };
+            el.on('drop', function (evt) {
+                // pretty simple -- but not for IE :(
+                evt.preventDefault();
+                file_el.files = evt.originalEvent.dataTransfer.files;
+                readURL(file_el);
+                box_el.removeClass("hovered");
+            });
             
             console.log("done");
         });
