@@ -172,7 +172,7 @@ a:focus {
 }
 
 .box.init {
-    height: 168px;
+    min-height: 168px;
 }
 
 .box.hovered {

@@ -70,6 +70,14 @@
 
 /* style 1 */
 
+body, html {
+    height: 100%;
+}
+
+.container {
+    min-height: 100%;
+}
+
 .inputfile-sexy + label {
     margin-top: 5px;
     position: relative;
