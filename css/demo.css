@@ -171,6 +171,10 @@ a:focus {
 	padding: 2.25rem .25rem;
 }
 
+.box.init {
+    height: 168px;
+}
+
 .box.hovered {
     width: calc(100% - 10px);
     background: rgb(26, 26, 26);
